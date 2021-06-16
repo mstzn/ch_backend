@@ -6,5 +6,5 @@ go:
 before_install:
   - go mod download
 
-  script:
+script:
   - go test -cpu=1,2 -v -tags integration ./...
