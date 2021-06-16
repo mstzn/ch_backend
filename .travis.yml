@@ -1,4 +1,10 @@
 language: go
 
 go:
-- main
+  - 1.16.x
+
+before_install:
+  - go mod download
+
+  script:
+  - go test -cpu=1,2 -v -tags integration ./...
