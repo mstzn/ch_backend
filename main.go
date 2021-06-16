@@ -1,26 +1,14 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"net/http"
-
-	"github.com/gorilla/mux"
-	"github.com/mstzn/modanisa_backend/routes"
+	"github.com/mstzn/modanisa_backend/server"
 )
 
-var listenPort = 3000
-
-func handleRequests() {
-	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/todos", routes.GetAllToDos).Methods("GET")
-	router.HandleFunc("/todos", routes.AddNewTodo).Methods("POST")
-	// ...
-
-	fmt.Println(fmt.Sprintf("Listening on %d", listenPort))
-	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s%d", ":", listenPort), router))
-}
-
 func main() {
-	handleRequests()
+	newServer := server.Server{
+		Port: 3000,
+	}
+
+	go newServer.Start()
+
 }

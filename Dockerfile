@@ -3,10 +3,10 @@ RUN apk add build-base
 
 RUN mkdir -p /app
 WORKDIR /app
-COPY ../go.mod ../go.sum ./
+COPY ./go.mod ./go.sum ./
 RUN go mod download
 
-ADD ../ /app
+ADD ./ /app
 
 RUN go build ./main.go
 

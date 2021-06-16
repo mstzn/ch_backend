@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/labstack/echo"
 	"github.com/mstzn/modanisa_backend/database"
 	"github.com/mstzn/modanisa_backend/errors"
 	"github.com/mstzn/modanisa_backend/models"
@@ -20,31 +21,33 @@ func addHeaders(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 }
 
-func GetAllToDos(w http.ResponseWriter, r *http.Request) {
+func GetAllToDos(c echo.Context) error {
 	fmt.Println("All todos requested.")
-	addHeaders(&w)
+	addHeaders(&c.Response().Writer)
 
 	records := (database.GetDatabase()).GetAll()
 
-	json.NewEncoder(w).Encode(records)
+	json.NewEncoder(c.Response()).Encode(records)
+
+	return nil
 }
 
-func AddNewTodo(w http.ResponseWriter, r *http.Request) {
+func AddNewTodo(c echo.Context) error {
 	fmt.Println("Add new todo requested.")
 
-	addHeaders(&w)
+	addHeaders(&c.Response().Writer)
 
-	reqBody, _ := ioutil.ReadAll(r.Body)
+	reqBody, _ := ioutil.ReadAll(c.Request().Body)
 	var todo models.ToDo
 	err := json.Unmarshal(reqBody, &todo)
 	if err != nil {
-		json.NewEncoder(w).Encode(errors.GetInvalidRequest("Can not unmarshal request body"))
-		return
+		json.NewEncoder(c.Response()).Encode(errors.GetInvalidRequest("Can not unmarshal request body"))
+		return err
 	}
 
 	if todo.Title == "" {
-		json.NewEncoder(w).Encode(errors.GetInvalidRequest("Title must provided!"))
-		return
+		json.NewEncoder(c.Response()).Encode(errors.GetInvalidRequest("Title must provided!"))
+		return nil
 	}
 
 	if todo.Id == "" {
@@ -54,9 +57,11 @@ func AddNewTodo(w http.ResponseWriter, r *http.Request) {
 
 	(database.GetDatabase()).Insert(todo)
 
-	err2 := json.NewEncoder(w).Encode(todo)
+	err2 := json.NewEncoder(c.Response()).Encode(todo)
 	if err2 != nil {
 		log.Println("Can not marshal response body")
-		return
+		return err2
 	}
+
+	return nil
 }
