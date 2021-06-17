@@ -8,3 +8,9 @@ before_install:
 
 script:
   - go test -cpu=1,2 -v -tags integration ./...
+
+deploy:
+  provider: gae
+  keyfile: "credentials.tar.gz.enc"
+  project: "modanisa.challenge"
+  on: main
