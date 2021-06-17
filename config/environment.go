@@ -1,14 +1,16 @@
 package config
 
 import (
-	"github.com/joho/godotenv"
 	"os"
+
+	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 )
 
-func GetEnvironmentVariable(key string, def string) string  {
+func GetEnvironmentVariable(key string, def string) string {
 	err := godotenv.Load()
 	if err != nil {
-		panic("Can not load environment file")
+		logrus.Error("Can not load environment file")
 	}
 	envValue := os.Getenv(key)
 

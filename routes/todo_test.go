@@ -4,31 +4,19 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"strings"
-	"syscall"
 	"testing"
 
 	"github.com/labstack/echo"
 	"github.com/mstzn/modanisa_backend/server"
-	"github.com/stretchr/testify/suite"
 )
 
-type toDoTestingSuite struct {
-	suite.Suite
-	port int
-}
-
-func TestToDoTestingSuite(t *testing.T) {
-	suite.Run(t, &toDoTestingSuite{})
-}
-
-func (s *toDoTestingSuite) SetupSuite() {
+func SetupSuite() {
 
 	serverReady := make(chan bool)
 
 	server := server.Server{
-		Port:        3000,
+		Port:        10000,
 		ServerReady: serverReady,
 	}
 
@@ -36,25 +24,35 @@ func (s *toDoTestingSuite) SetupSuite() {
 	<-serverReady
 }
 
-func (s *toDoTestingSuite) TearDownSuite() {
-	p, _ := os.FindProcess(syscall.Getpid())
-	p.Signal(syscall.SIGINT)
-}
-func (s *toDoTestingSuite) Test_EndToEnd_Todo() {
+func TestCreateTodo(t *testing.T) {
+
+	SetupSuite()
+
 	reqStr := `{"title":"sample"}`
-	req, err := http.NewRequest(echo.POST, fmt.Sprintf("http://localhost:%d/todos", s.port), strings.NewReader(reqStr))
-	s.NoError(err)
+	req, err := http.NewRequest(echo.POST, fmt.Sprintf("http://localhost:%d/todos", 10000), strings.NewReader(reqStr))
+	if err != nil {
+		t.Error("Request instance failed")
+	}
 
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
 	client := http.Client{}
 	response, err := client.Do(req)
-	s.NoError(err)
-	s.Equal(http.StatusCreated, response.StatusCode)
+	if err != nil {
+		t.Error("Request failed")
+	}
+	if http.StatusOK != response.StatusCode {
+		t.Error("Status codes not match")
+	}
 
 	byteBody, err := ioutil.ReadAll(response.Body)
-	s.NoError(err)
+	if err != nil {
+		t.Error("Read body failed")
+	}
 
-	s.Equal(`{"status":200,"message":"Success","data":{"id":1}}`, strings.Trim(string(byteBody), "\n"))
+	if !strings.Contains(strings.Trim(string(byteBody), "\n"), `"title":"sample"`) {
+		t.Error("Response does not match")
+	}
+
 	response.Body.Close()
 }
