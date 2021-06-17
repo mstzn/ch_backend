@@ -15,10 +15,10 @@ import (
 )
 
 func addHeaders(w *http.ResponseWriter) {
-	(*w).Header().Set("Content-Type", "application/json")
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
 	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET")
 	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+	(*w).Header().Set("Content-Type", "application/json")
 }
 
 func GetAllToDos(c echo.Context) error {

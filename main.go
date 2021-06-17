@@ -9,6 +9,6 @@ func main() {
 		Port: 3000,
 	}
 
-	go newServer.Start()
+	newServer.Start()
 
 }

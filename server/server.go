@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 	"github.com/mstzn/modanisa_backend/routes"
 	"github.com/sirupsen/logrus"
 )
@@ -23,6 +24,11 @@ func (s *Server) Start() {
 	appPort := fmt.Sprintf(":%d", s.Port)
 
 	e := echo.New()
+
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	}))
 
 	e.POST("/todos", routes.AddNewTodo)
 	e.GET("/todos", routes.GetAllToDos)
