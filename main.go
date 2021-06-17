@@ -6,7 +6,7 @@ import (
 
 func main() {
 	newServer := server.Server{
-		Port: 3000,
+		Port: 10000,
 	}
 
 	newServer.Start()
