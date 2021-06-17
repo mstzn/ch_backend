@@ -8,7 +8,5 @@ func main() {
 	newServer := server.Server{
 		Port: 10000,
 	}
-
 	newServer.Start()
-
 }
