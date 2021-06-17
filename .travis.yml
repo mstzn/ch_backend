@@ -12,5 +12,5 @@ script:
 deploy:
   provider: gae
   keyfile: "credentials.tar.gz.enc"
-  project: "modanisa.challenge"
+  project: "modanisa-challenge"
   on: main
